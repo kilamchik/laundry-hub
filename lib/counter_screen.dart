@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:laundry_hub/counter_logic.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CounterScreen extends StatefulWidget {
   const CounterScreen({super.key});

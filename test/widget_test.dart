@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:laundry_hub/counter_logic.dart';
 import 'package:laundry_hub/main.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   group('parseInput', () {

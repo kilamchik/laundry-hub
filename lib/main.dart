@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:laundry_hub/counter_screen.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   runApp(const MyApp());
