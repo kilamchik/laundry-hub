@@ -1,30 +1,53 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:laundry_hub/counter_logic.dart';
 import 'package:laundry_hub/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  group('parseInput', () {
+    test('positive and negative integers become AddCommand', () {
+      expect(
+        parseInput('5'),
+        isA<AddCommand>().having((c) => c.value, 'value', 5),
+      );
+      expect(
+        parseInput(' -3 '),
+        isA<AddCommand>().having((c) => c.value, 'value', -3),
+      );
+    });
+
+    test('exact phrase becomes ResetCommand', () {
+      expect(parseInput('Avada Kedavra'), isA<ResetCommand>());
+    });
+
+    test('anything else is InvalidCommand', () {
+      for (final input in ['', 'abc', '2.5', '0x10', '1 2', 'avada kedavra']) {
+        expect(parseInput(input), isA<InvalidCommand>(), reason: input);
+      }
+    });
+  });
+
+  testWidgets('counter adds, ignores invalid input and resets', (tester) async {
     await tester.pumpWidget(const MyApp());
+    final field = find.byKey(const Key('inputField'));
+    final button = find.byKey(const Key('applyButton'));
 
-    // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.enterText(field, '7');
+    await tester.tap(button);
     await tester.pump();
+    expect(find.text('7'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.enterText(field, 'abc');
+    await tester.tap(button);
+    await tester.pump();
+    expect(find.text('7'), findsOneWidget);
+    expect(find.byType(SnackBar), findsOneWidget);
+
+    await tester.enterText(field, 'Avada Kedavra');
+    await tester.tap(button);
+    await tester.pump();
+    expect(find.text('0'), findsOneWidget);
   });
 }
